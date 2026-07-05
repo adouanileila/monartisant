@@ -1,0 +1,24 @@
+{
+  "name": "@monartisant/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@monartisant/db": "workspace:*",
+    "@monartisant/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@monartisant/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

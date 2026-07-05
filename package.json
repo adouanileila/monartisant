@@ -1,0 +1,36 @@
+{
+  "name": "monartisant",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:web": "turbo run dev -F web",
+    "dev:server": "turbo run dev -F server",
+    "db:push": "turbo run db:push -F @monartisant/db",
+    "db:studio": "turbo run db:studio -F @monartisant/db",
+    "db:generate": "turbo run db:generate -F @monartisant/db",
+    "db:migrate": "turbo run db:migrate -F @monartisant/db",
+    "db:start": "turbo run db:start -F @monartisant/db",
+    "db:watch": "turbo run db:watch -F @monartisant/db",
+    "db:stop": "turbo run db:stop -F @monartisant/db",
+    "db:down": "turbo run db:down -F @monartisant/db"
+  },
+  "dependencies": {
+    "@monartisant/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@monartisant/config": "workspace:*",
+    "@types/node": "^22.13.14",
+    "turbo": "^2.10.2",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

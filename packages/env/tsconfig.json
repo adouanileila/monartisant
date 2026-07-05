@@ -1,0 +1,3 @@
+{
+  "extends": "@monartisant/config/tsconfig.base.json"
+}
