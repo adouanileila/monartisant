@@ -1,0 +1,408 @@
+/* Onboarding Layout */
+.ob-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9fafb;
+  padding: 88px 24px 24px;
+  font-family: inherit;
+}
+
+.ob-card-wrapper {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Animations */
+@keyframes obFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes obExit {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+.ob-animate-enter {
+  animation: obFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.ob-animate-exit {
+  animation: obExit 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Typography */
+.ob-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--gray-900, #111827);
+  text-align: center;
+  margin-bottom: 48px;
+  letter-spacing: -0.02em;
+}
+
+/* Role Selection Cards */
+.ob-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .ob-roles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ob-role-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 32px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ob-role-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.ob-role-card.selected {
+  transform: scale(1.02);
+  border-color: var(--tc);
+  box-shadow: 0 0 0 4px var(--tc-glow);
+}
+
+/* Background Gradients */
+.ob-role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  opacity: 0.1;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.ob-role-card--client::before {
+  background: linear-gradient(180deg, var(--tc, #1dbf73) 0%, rgba(255,255,255,0) 100%);
+}
+
+.ob-role-card--artisan::before {
+  background: linear-gradient(180deg, #c27c3e 0%, rgba(255,255,255,0) 100%); /* Terracotta */
+}
+
+.ob-role-card:hover::before {
+  opacity: 0.2;
+}
+
+/* Card Content */
+.ob-role-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ob-role-card--client .ob-role-icon-wrapper {
+  background: rgba(29, 191, 115, 0.1);
+  color: var(--tc, #1dbf73);
+}
+
+.ob-role-card--artisan .ob-role-icon-wrapper {
+  background: rgba(194, 124, 62, 0.1);
+  color: #c27c3e;
+}
+
+.ob-role-card:hover .ob-role-icon-wrapper {
+  transform: scale(1.1);
+}
+
+.ob-role-card:hover .ob-icon-anim {
+  animation: wiggle 1s ease infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.ob-role-label {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900, #111827);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.ob-role-desc {
+  font-size: 16px;
+  color: var(--gray-500, #6b7280);
+  line-height: 1.5;
+  margin-bottom: 32px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.ob-role-action {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  transition: gap 0.3s ease;
+}
+
+.ob-role-card--client .ob-role-action { color: var(--tc, #1dbf73); }
+.ob-role-card--artisan .ob-role-action { color: #c27c3e; }
+
+.ob-role-card:hover .ob-role-action {
+  gap: 12px;
+}
+
+/* Forms */
+.ob-form-container {
+  background: white;
+  border-radius: 24px;
+  padding: 48px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.ob-form-header {
+  margin-bottom: 32px;
+}
+
+.ob-form-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gray-900, #111827);
+  margin-bottom: 8px;
+}
+
+.ob-form-subtitle {
+  font-size: 16px;
+  color: var(--gray-500, #6b7280);
+}
+
+.ob-form-group {
+  margin-bottom: 24px;
+}
+
+.ob-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-700, #374151);
+  margin-bottom: 8px;
+}
+
+.ob-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--gray-200, #e5e7eb);
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: #f9fafb;
+}
+
+.ob-input:focus {
+  outline: none;
+  border-color: var(--tc, #1dbf73);
+  background: white;
+  box-shadow: 0 0 0 4px var(--tc-glow);
+}
+
+textarea.ob-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.ob-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--tc, #1dbf73);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ob-btn:hover {
+  background: var(--tc-dark, #19a463);
+}
+
+/* Artisan Assistant specifics */
+.ob-steps-indicator {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.ob-step-dot {
+  height: 6px;
+  flex: 1;
+  border-radius: 3px;
+  background: var(--gray-200, #e5e7eb);
+  transition: background 0.3s ease;
+}
+
+.ob-step-dot.active {
+  background: var(--tc, #1dbf73);
+}
+
+.ob-trust-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(194, 124, 62, 0.05); /* Very light terracotta */
+  border: 1px solid rgba(194, 124, 62, 0.2);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.ob-trust-icon {
+  color: #c27c3e;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ob-trust-text {
+  font-size: 14px;
+  color: var(--gray-700, #374151);
+  line-height: 1.5;
+}
+
+.ob-trust-text strong {
+  color: var(--gray-900, #111827);
+}
+
+/* Categories grid for Artisan */
+.ob-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.ob-cat-btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--gray-200, #e5e7eb);
+  background: white;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-700, #374151);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.ob-cat-btn:hover {
+  border-color: var(--gray-300, #d1d5db);
+  background: #f9fafb;
+}
+
+.ob-cat-btn.selected {
+  border-color: var(--tc, #1dbf73);
+  background: var(--tc-xlight, #e8f8f1);
+  color: var(--tc-dark, #19a463);
+}
+.ob-greeting {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tc, #1dbf73);
+  margin-bottom: 8px;
+}
+
+.ob-subtitle {
+  text-align: center;
+  font-size: 15px;
+  color: var(--gray-500, #6b7280);
+  margin-top: -32px;
+  margin-bottom: 40px;
+}
+
+.ob-title {
+  margin-bottom: 8px;
+}
+
+.ob-role-check {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1.5px solid var(--gray-200, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.ob-role-card.selected .ob-role-check {
+  background: var(--tc, #1dbf73);
+  border-color: var(--tc, #1dbf73);
+}
+
+.ob-continue-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 40px auto 0;
+  padding: 14px 36px;
+  border-radius: 12px;
+  background: var(--tc, #1dbf73);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ob-continue-btn:hover:not(:disabled) {
+  background: var(--tc-dark, #19a463);
+  transform: translateY(-2px);
+}
+
+.ob-continue-btn:disabled {
+  background: var(--gray-200, #e5e7eb);
+  color: var(--gray-400, #ababab);
+  cursor: not-allowed;
+}

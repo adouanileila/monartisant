@@ -3,8 +3,6 @@ import { redirect } from "next/navigation";
 
 import { authClient } from "@/lib/auth-client";
 
-import Dashboard from "./dashboard";
-
 export default async function DashboardPage() {
   const session = await authClient.getSession({
     fetchOptions: {
@@ -17,11 +15,15 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Welcome {session.user.name}</p>
-      <Dashboard session={session} />
-    </div>
-  );
+  const role = session.user.role;
+
+  if (role === "artisan") {
+    redirect("/dashboard/artisan");
+  } else if (role === "admin") {
+    redirect("/dashboard/admin");
+  } else if (role === "client") {
+    redirect("/dashboard/client");
+  } else {
+    redirect("/onboarding");
+  }
 }
