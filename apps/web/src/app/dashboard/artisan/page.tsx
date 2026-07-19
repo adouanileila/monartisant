@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ClipboardList, CheckCircle, Star, DollarSign, Eye, ArrowRight, Bell, MapPin, Calendar } from "lucide-react";
+import { ClipboardList, CheckCircle, Star, DollarSign, Eye, ArrowRight, MapPin, Calendar } from "lucide-react";
 import LandingFooter from "@/components/landing/landing-footer";
 import "../../../landing.css";
 
@@ -26,7 +26,7 @@ const categories = [
 export default function ArtisanDashboardPage() {
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col">
-      {/* Hero Header minimaliste avec fond photographique intégré */}
+      {/* Hero Header avec fond photographique intégré */}
       <div className="relative h-64 lg:h-[300px] w-full">
         <Image
           src="/images/hero-artisan.png"
@@ -37,22 +37,6 @@ export default function ArtisanDashboardPage() {
         />
         <div className="absolute inset-0 bg-slate-900/60" />
         
-        {/* Navbar Minimaliste */}
-        <div className="absolute top-0 inset-x-0 p-6 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
-            <Image src="/images/logo.png" alt="MonArtisant Logo" width={32} height={32} className="rounded-md" />
-            <span className="text-white font-medium text-lg tracking-wide">MonArtisant</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="text-white/80 hover:text-white transition-colors">
-              <Bell className="w-5 h-5" />
-            </button>
-            <div className="w-10 h-10 rounded-full overflow-hidden relative border border-white/30 cursor-pointer">
-              <Image src="/images/artisans/marc-carpenter.png" alt="Profile" fill className="object-cover" />
-            </div>
-          </div>
-        </div>
-
         {/* Hero Content */}
         <div className="absolute bottom-8 left-6 lg:left-12 z-10 text-white">
           <p className="text-emerald-400 text-sm font-semibold mb-2 flex items-center gap-2">
@@ -68,19 +52,22 @@ export default function ArtisanDashboardPage() {
         </div>
       </div>
 
-      <div className="px-6 lg:px-12 max-w-6xl mx-auto mt-10 space-y-12">
-        
-        {/* Stats Section Plat (Sans Cartes) */}
+      {/* Contenu principal */}
+      <div className="flex-1 px-6 lg:px-12 max-w-6xl mx-auto w-full py-10 space-y-12">
+
+        {/* Stats */}
         <div>
           <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-6">Aperçu</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-8">
             {stats.map((s) => (
-              <div key={s.label} className="flex flex-col">
-                <div className="flex items-center gap-3 mb-2">
-                  <s.icon className={`w-5 h-5 ${s.color}`} />
-                  <span className="text-sm font-medium text-slate-500">{s.label}</span>
+              <div key={s.label} className="flex flex-col bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`p-2.5 rounded-xl bg-slate-50 ${s.color}`}>
+                    <s.icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[14px] font-medium text-slate-500">{s.label}</span>
                 </div>
-                <span className="text-3xl font-light text-slate-900">{s.value}</span>
+                <span className="text-4xl font-semibold text-slate-800 tracking-tight">{s.value}</span>
               </div>
             ))}
           </div>
@@ -89,8 +76,8 @@ export default function ArtisanDashboardPage() {
         <div className="w-full h-px bg-slate-100" />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-          
-          {/* Nouvelles demandes - Liste Plate */}
+
+          {/* Demandes récentes */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Demandes récentes</h2>
@@ -98,7 +85,7 @@ export default function ArtisanDashboardPage() {
                 Tout voir <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-            
+
             <div className="flex flex-col">
               {demandes.map((d, i) => (
                 <div
@@ -120,7 +107,7 @@ export default function ArtisanDashboardPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4 mt-4 sm:mt-0">
                     <span
                       className={`text-xs px-3 py-1 rounded-full font-medium ${
@@ -143,7 +130,7 @@ export default function ArtisanDashboardPage() {
             </div>
           </div>
 
-          {/* Expertises - Liste Plate */}
+          {/* Expertises */}
           <div>
             <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-6">Expertises</h2>
             <div className="flex flex-col gap-1">
@@ -158,11 +145,12 @@ export default function ArtisanDashboardPage() {
               ))}
             </div>
           </div>
-          
+
         </div>
       </div>
 
-      <div className="mt-auto pt-20">
+      {/* Footer */}
+      <div className="mt-16">
         <LandingFooter />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ArtisanNavbar } from "@/components/artisan/artisan-navbar";
+import { ArtisanSidebarLayout } from "@/components/artisan/artisan-sidebar-layout";
 
 export default function ArtisanLayout({
   children,
@@ -6,9 +6,8 @@ export default function ArtisanLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <ArtisanNavbar />
-      <main className="p-6">{children}</main>
-    </div>
+    <ArtisanSidebarLayout>
+      {children}
+    </ArtisanSidebarLayout>
   );
-}
+}
