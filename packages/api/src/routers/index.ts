@@ -1,4 +1,5 @@
 import type { RouterClient } from "@orpc/server";
+import { demandeController } from "../controllers/demande.controller";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure } from "../index";
@@ -11,6 +12,30 @@ export const appRouter = {
   }),
   privateData: protectedProcedure.handler(({ context }) => {
     return userController.getPrivateData(context);
+  }),
+  createDemande: protectedProcedure
+  .input(z.object({ description: z.string(), adresse: z.string() }))
+  .handler(({ context, input }) => {
+    return demandeController.create(context.session.user.id, input);
+  }),
+
+myDemandes: protectedProcedure.handler(({ context }) => {
+  return demandeController.getMyDemandes(
+    context.session.user.id,
+    context.session.user.role ?? "client",
+  );
+}),
+
+updateDemandeStatut: protectedProcedure
+  .input(z.object({ demandeId: z.string(), statut: z.string() }))
+  .handler(({ input }) => {
+    return demandeController.updateStatut(input.demandeId, input.statut);
+  }),
+
+acceptDemande: protectedProcedure
+  .input(z.object({ demandeId: z.string(), artisanId: z.string() }))
+  .handler(({ input }) => {
+    return demandeController.accept(input.demandeId, input.artisanId);
   }),
   onboardClient: protectedProcedure
     .input(z.object({ phone: z.string() }))
