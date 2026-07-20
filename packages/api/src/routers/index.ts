@@ -5,6 +5,7 @@ import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
 import { healthController } from "../controllers/health.controller";
 import { userController } from "../controllers/user.controller";
+import { categorieController } from "../controllers/categorie.controller";
 
 export const appRouter = {
   healthCheck: publicProcedure.handler(() => {
@@ -12,6 +13,21 @@ export const appRouter = {
   }),
   privateData: protectedProcedure.handler(({ context }) => {
     return userController.getPrivateData(context);
+  }),
+  getCategories: publicProcedure.handler(() => {
+  return categorieController.getAll();
+}),
+
+createCategorie: protectedProcedure
+  .input(z.object({ nom: z.string().min(1) }))
+  .handler(({ input }) => {
+    return categorieController.create(input.nom);
+  }),
+
+deleteCategorie: protectedProcedure
+  .input(z.object({ id: z.string() }))
+  .handler(({ input }) => {
+    return categorieController.delete(input.id);
   }),
   createDemande: protectedProcedure
   .input(z.object({ description: z.string(), adresse: z.string() }))
