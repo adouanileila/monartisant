@@ -4,3 +4,4 @@ export * from "./demande";
 export * from "./avis";
 export * from "./paiement";
 export *from "./categorie";
+export * from "./message";

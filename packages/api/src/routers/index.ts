@@ -1,11 +1,11 @@
 import type { RouterClient } from "@orpc/server";
 import { demandeController } from "../controllers/demande.controller";
 import { z } from "zod";
-
 import { protectedProcedure, publicProcedure } from "../index";
 import { healthController } from "../controllers/health.controller";
 import { userController } from "../controllers/user.controller";
 import { categorieController } from "../controllers/categorie.controller";
+import { messageService } from "../services/message.service";
 
 export const appRouter = {
   healthCheck: publicProcedure.handler(() => {
@@ -17,6 +17,11 @@ export const appRouter = {
   getCategories: publicProcedure.handler(() => {
   return categorieController.getAll();
 }),
+getMessages: protectedProcedure
+  .input(z.object({ demandeId: z.string() }))
+  .handler(({ input }) => {
+    return messageService.getByDemande(input.demandeId);
+  }),
 
 createCategorie: protectedProcedure
   .input(z.object({ nom: z.string().min(1) }))
@@ -69,6 +74,7 @@ acceptDemande: protectedProcedure
     .handler(({ context, input }) => {
       return userController.onboardArtisan(context, input);
     }),
+
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;

@@ -1,47 +1,90 @@
 "use client";
 
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Users,
   Tag,
+  Wrench,
+  Users,
   ShieldCheck,
+  FileText,
+  ShieldAlert,
+  CreditCard,
+  Settings,
   User,
   Bell,
   Menu,
   X,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import Image from "next/image";
 
 const navItems = [
-  { label: "Tableau de bord", href: "/dashboard/admin", icon: LayoutDashboard },
-  { label: "Catégories", href: "/dashboard/admin/categories", icon: Tag },
-  { label: "Utilisateurs", href: "/dashboard/admin/utilisateurs", icon: Users },
-  { label: "Vérifications", href: "/dashboard/admin/verifications", icon: ShieldCheck, badge: 5 },
+  { label: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
+  {
+    label: "Catégories & Services",
+    href: "/dashboard/admin/categories",
+    icon: Tag,
+  },
+  {
+    label: "Vérification des artisans",
+    href: "/dashboard/admin/verifications",
+    icon: ShieldCheck,
+    badge: 5,
+  },
+  {
+    label: "Gestion des demandes",
+    href: "/dashboard/admin/demandes",
+    icon: FileText,
+    badge: 12,
+  },
+  {
+    label: "Réclamations",
+    href: "/dashboard/admin/reclamations",
+    icon: ShieldAlert,
+  },
+  {
+    label: "Paiements",
+    href: "/dashboard/admin/paiements",
+    icon: CreditCard,
+  },
 ];
 
-export function AdminSidebarLayout({ children }: { children: React.ReactNode }) {
+const bottomItems = [
+  { label: "Paramètres", href: "/dashboard/admin/parametres", icon: Settings },
+  { label: "Mon profil", href: "/dashboard/admin/profil", icon: User },
+];
+
+export function AdminSidebarLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const activeColor = "text-[#1dbf73]";
-  const activeBg = "bg-[#1dbf73]/10";
-  const activeBorder = "border-[#1dbf73]";
+  const isItemActive = (href: string) => {
+    if (href === "/dashboard/admin") return pathname === href;
+    return pathname?.startsWith(href);
+  };
 
   const SidebarContent = ({ collapsed }: { collapsed?: boolean }) => (
     <div className="flex flex-col h-full bg-white font-['Outfit',sans-serif]">
       {/* Logo */}
-      <Link href="/" className={`flex items-center ${collapsed ? 'justify-center px-0' : 'gap-3 px-6'} py-8 group`}>
+      <Link
+        href="/"
+        className={`flex items-center ${collapsed ? "justify-center px-0" : "gap-3 px-6"} py-6 group border-b border-slate-100`}
+      >
         <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 shadow-sm group-hover:scale-105 transition-transform duration-300">
-          <Image 
-            src="/images/logo.png" 
-            alt="MonArtisant Logo" 
-            fill 
-            className="object-contain" 
+          <Image
+            src="/images/logo.png"
+            alt="Mon Artisan Logo"
+            fill
+            className="object-contain"
             sizes="36px"
           />
         </div>
@@ -53,25 +96,39 @@ export function AdminSidebarLayout({ children }: { children: React.ReactNode }) 
       </Link>
 
       {/* Nav Items */}
-      <nav className={`flex-1 overflow-y-auto scrollbar-hide ${collapsed ? 'px-2 space-y-2' : 'px-4 space-y-2'}`}>
+      <nav
+        className={`flex-1 overflow-y-auto scrollbar-hide py-4 ${collapsed ? "px-2 space-y-1" : "px-3 space-y-0.5"}`}
+      >
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (pathname?.startsWith(item.href) && item.href !== "/dashboard/admin");
+          const active = isItemActive(item.href);
           const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
               title={collapsed ? item.label : undefined}
-              className={`flex items-center relative ${collapsed ? 'justify-center px-0 py-3 rounded-xl border-l-0' : 'justify-between px-3 py-3 rounded-xl border-l-4'} transition-all duration-200 group ${
-                isActive
-                  ? `${activeBg} ${activeColor} ${collapsed ? '' : activeBorder}`
-                  : `${collapsed ? '' : 'border-transparent'} text-slate-500 hover:bg-slate-50 hover:text-slate-900`
+              className={`flex items-center relative ${
+                collapsed
+                  ? "justify-center px-0 py-3 rounded-xl"
+                  : "justify-between px-3 py-2.5 rounded-xl"
+              } transition-all duration-200 group ${
+                active
+                  ? "bg-[#1dbf73]/10 text-[#1dbf73]"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
               }`}
             >
               <div className="flex items-center gap-3">
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} className={collapsed && isActive ? activeColor : ''} />
+                <Icon
+                  size={20}
+                  strokeWidth={active ? 2.5 : 2}
+                  className={active ? "text-[#1dbf73]" : ""}
+                />
                 {!collapsed && (
-                  <span className={`text-[15px] ${isActive ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>
+                  <span
+                    className={`text-[14px] ${active ? "font-semibold text-[#1dbf73]" : "font-medium"}`}
+                  >
+                    {item.label}
+                  </span>
                 )}
               </div>
               {!collapsed && item.badge && (
@@ -80,45 +137,89 @@ export function AdminSidebarLayout({ children }: { children: React.ReactNode }) 
                 </span>
               )}
               {collapsed && item.badge && (
-                <span className="absolute top-2 right-2 w-2 h-2 bg-[#1dbf73] rounded-full ring-2 ring-white"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#1dbf73] rounded-full ring-2 ring-white" />
               )}
             </Link>
           );
         })}
 
-        <div className={`my-6 border-t border-slate-100 ${collapsed ? 'mx-2' : 'mx-3'}`} />
+        <div
+          className={`my-4 border-t border-slate-100 ${collapsed ? "mx-1" : "mx-2"}`}
+        />
 
-        <Link
-          href="/dashboard/admin/profil"
-          title={collapsed ? "Mon profil" : undefined}
-          className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0 py-3 rounded-xl border-l-0' : 'px-3 py-3 rounded-xl border-l-4'} transition-all duration-200 ${
-            pathname?.startsWith("/dashboard/admin/profil")
-              ? `${activeBg} ${activeColor} ${collapsed ? '' : activeBorder}`
-              : `${collapsed ? '' : 'border-transparent'} text-slate-500 hover:bg-slate-50 hover:text-slate-900`
-          }`}
-        >
-          <User size={22} strokeWidth={pathname?.startsWith("/dashboard/admin/profil") ? 2.5 : 2} className={collapsed && pathname?.startsWith("/dashboard/admin/profil") ? activeColor : ''} />
-          {!collapsed && <span className={`text-[15px] ${pathname?.startsWith("/dashboard/admin/profil") ? 'font-semibold' : 'font-medium'}`}>Mon profil</span>}
-        </Link>
-        
+        {bottomItems.map((item) => {
+          const active = isItemActive(item.href);
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={collapsed ? item.label : undefined}
+              className={`flex items-center gap-3 ${
+                collapsed
+                  ? "justify-center px-0 py-3 rounded-xl"
+                  : "px-3 py-2.5 rounded-xl"
+              } transition-all duration-200 ${
+                active
+                  ? "bg-[#1dbf73]/10 text-[#1dbf73]"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+              }`}
+            >
+              <Icon
+                size={20}
+                strokeWidth={active ? 2.5 : 2}
+                className={active ? "text-[#1dbf73]" : ""}
+              />
+              {!collapsed && (
+                <span
+                  className={`text-[14px] ${active ? "font-semibold text-[#1dbf73]" : "font-medium"}`}
+                >
+                  {item.label}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+
         <button
           title={collapsed ? "Déconnexion" : undefined}
-          className={`w-full flex items-center gap-3 ${collapsed ? 'justify-center px-0 py-3 rounded-xl' : 'px-3 py-3 rounded-xl border-l-4 border-transparent'} transition-all duration-200 text-slate-500 hover:bg-red-50 hover:text-red-600 group mt-2`}
+          className={`w-full flex items-center gap-3 ${
+            collapsed
+              ? "justify-center px-0 py-3 rounded-xl"
+              : "px-3 py-2.5 rounded-xl"
+          } transition-all duration-200 text-slate-500 hover:bg-red-50 hover:text-red-500 group mt-1`}
         >
-          <LogOut size={22} strokeWidth={2} className="group-hover:text-red-600 transition-colors" />
-          {!collapsed && <span className="text-[15px] font-medium group-hover:text-red-600 transition-colors">Déconnexion</span>}
+          <LogOut
+            size={20}
+            strokeWidth={2}
+            className="group-hover:text-red-500 transition-colors"
+          />
+          {!collapsed && (
+            <span className="text-[14px] font-medium group-hover:text-red-500 transition-colors">
+              Déconnexion
+            </span>
+          )}
         </button>
       </nav>
 
       {/* User Card */}
-      <div className={`p-4 mt-auto border-t border-slate-50 ${collapsed ? 'px-2' : 'px-4'}`}>
-        <div className={`flex items-center ${collapsed ? 'justify-center p-2' : 'gap-3 p-3'} border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-200 transition-colors cursor-pointer group shadow-sm bg-white`}>
-          <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm bg-slate-900 flex items-center justify-center text-white">
-            <User size={20} />
+      <div
+        className={`p-3 border-t border-slate-100 ${collapsed ? "px-2" : "px-3"}`}
+      >
+        <div
+          className={`flex items-center ${collapsed ? "justify-center p-2" : "gap-3 p-3"} rounded-xl hover:bg-slate-50 transition-colors cursor-pointer`}
+        >
+          <div className="relative w-9 h-9 rounded-full shrink-0 bg-[#1dbf73] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+            A
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-[15px] font-bold text-slate-800 truncate leading-tight">Admin</p>
+              <p className="text-[14px] font-bold text-slate-800 truncate leading-tight">
+                Admin
+              </p>
+              <p className="text-[12px] text-[#1dbf73] font-medium truncate">
+                Administrateur
+              </p>
             </div>
           )}
         </div>
@@ -127,11 +228,11 @@ export function AdminSidebarLayout({ children }: { children: React.ReactNode }) 
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f8f8f8] font-['Outfit',sans-serif]">
+    <div className="flex h-screen overflow-hidden bg-[#f8f9fa] font-['Outfit',sans-serif]">
       {/* Desktop Sidebar */}
-      <aside 
-        className={`hidden md:block shrink-0 border-r border-slate-200 bg-white shadow-[1px_0_10px_rgba(0,0,0,0.02)] z-20 transition-all duration-300 ease-in-out ${
-          isDesktopCollapsed ? 'w-[80px]' : 'w-[260px]'
+      <aside
+        className={`hidden md:block shrink-0 border-r border-slate-100 bg-white z-20 transition-all duration-300 ease-in-out ${
+          isDesktopCollapsed ? "w-[72px]" : "w-[240px]"
         }`}
       >
         <SidebarContent collapsed={isDesktopCollapsed} />
@@ -140,13 +241,13 @@ export function AdminSidebarLayout({ children }: { children: React.ReactNode }) 
       {/* Mobile Drawer */}
       {isMobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          <div 
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
             onClick={() => setIsMobileOpen(false)}
           />
-          <aside className="relative w-[280px] max-w-[80%] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
-            <button 
-              className="absolute top-6 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
+          <aside className="relative w-[260px] max-w-[85%] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
+            <button
+              className="absolute top-5 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
               onClick={() => setIsMobileOpen(false)}
             >
               <X size={20} />
@@ -157,38 +258,40 @@ export function AdminSidebarLayout({ children }: { children: React.ReactNode }) 
       )}
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-white border-b border-slate-200 shrink-0 shadow-sm sticky top-0 z-10">
+        <header className="h-14 flex items-center justify-between px-4 sm:px-6 bg-white border-b border-slate-100 shrink-0 sticky top-0 z-10">
           <div className="flex items-center">
-            <button 
+            <button
               className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors"
               onClick={() => setIsMobileOpen(true)}
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
-            <button 
+            <button
               className="hidden md:block p-2 -ml-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors"
               onClick={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
-              title={isDesktopCollapsed ? "Développer le menu" : "Réduire le menu"}
+              title={
+                isDesktopCollapsed ? "Développer le menu" : "Réduire le menu"
+              }
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
           </div>
-          
-          <div className="flex items-center gap-5">
-            <button className="relative p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 rounded-full transition-colors group">
-              <Bell size={20} className="group-hover:animate-swing" />
+
+          <div className="flex items-center gap-3">
+            <button className="relative p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 rounded-full transition-colors">
+              <Bell size={20} />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#1dbf73] rounded-full ring-2 ring-white" />
             </button>
-            <div className="h-6 w-px bg-slate-200" />
-            <div className="w-9 h-9 rounded-full overflow-hidden relative border border-slate-200 cursor-pointer shadow-sm hover:ring-2 hover:ring-[#1dbf73]/20 transition-all bg-slate-900 flex items-center justify-center text-white">
-              <User size={18} />
+            <div className="w-8 h-8 rounded-full bg-[#1dbf73] flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity shadow-sm">
+              A
             </div>
           </div>
         </header>
 
         {/* Scrollable Main Area */}
-        <main className="flex-1 overflow-y-auto scroll-smooth">
+        <main className="flex-1 overflow-y-auto">
           {children}
         </main>
       </div>
