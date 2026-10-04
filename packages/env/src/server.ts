@@ -13,6 +13,8 @@ export const env = createEnv({
     FACEBOOK_CLIENT_ID: z.string().min(1),
     FACEBOOK_CLIENT_SECRET: z.string().min(1),
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+    // Optional during build — must be set at runtime before initiating payments.
+    STRIPE_SECRET_KEY: z.string().optional(),
   },
   runtimeEnv: process.env,
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,

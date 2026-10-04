@@ -347,19 +347,26 @@ export default function AdminCategoriesPage() {
                   value={newSvcNom}
                   onChange={(e) => setNewSvcNom(e.target.value)}
                   placeholder="Nom du service"
-                  className="flex-1 text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400 transition-all"
+                  disabled={!categories || categories.length === 0}
+                  className="flex-1 text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400 transition-all disabled:opacity-50"
                 />
-                <select
-                  value={newSvcCatId}
-                  onChange={(e) => setNewSvcCatId(e.target.value)}
-                  className="text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400 transition-all"
-                  disabled={loadingCats}
-                >
-                  <option value="">— Catégorie —</option>
-                  {(categories as CatRow[] | undefined)?.map((c) => (
-                    <option key={c.id} value={c.id}>{c.nom}</option>
-                  ))}
-                </select>
+                {!loadingCats && (!categories || categories.length === 0) ? (
+                  <span className="text-xs text-amber-600 bg-amber-50 ring-1 ring-amber-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap">
+                    ⚠ Créez d&apos;abord une catégorie
+                  </span>
+                ) : (
+                  <select
+                    value={newSvcCatId}
+                    onChange={(e) => setNewSvcCatId(e.target.value)}
+                    className="text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400 transition-all"
+                    disabled={loadingCats}
+                  >
+                    <option value="">— Catégorie —</option>
+                    {(categories as CatRow[] | undefined)?.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nom}</option>
+                    ))}
+                  </select>
+                )}
               </div>
               <div className="flex gap-2">
                 <input

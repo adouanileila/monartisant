@@ -3,6 +3,8 @@ import { ORPCError } from "@orpc/server";
 import { demandeController } from "../controllers/demande.controller";
 import { demandeService } from "../services/demande.service";
 import { artisanService } from "../services/artisan.service";
+import { avisController } from "../controllers/avis.controller";
+import { paiementController } from "../controllers/paiement.controller";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
 import { healthController } from "../controllers/health.controller";
@@ -47,7 +49,13 @@ export const appRouter = {
     }),
 
   createDemande: protectedProcedure
-    .input(z.object({ description: z.string(), adresse: z.string() }))
+    .input(
+      z.object({
+        description: z.string(),
+        adresse: z.string(),
+        serviceId: z.string().optional(),
+      }),
+    )
     .handler(({ context, input }) => {
       return demandeController.create(context.session.user.id, input);
     }),
@@ -75,7 +83,21 @@ export const appRouter = {
           message: "Artisan profile not found. Please complete onboarding first.",
         });
       }
-      return demandeController.accept(input.demandeId, profile.id);
+      try {
+        return await demandeController.accept(input.demandeId, profile.id);
+      } catch (err: any) {
+        const msg: string = err?.message ?? "";
+        if (msg === "PRIX_NON_DEFINI") {
+          throw new ORPCError("FORBIDDEN", {
+            message:
+              "Vous devez définir un prix pour ce service avant de l'accepter.",
+          });
+        }
+        if (msg === "DEMANDE_INTROUVABLE") {
+          throw new ORPCError("NOT_FOUND", { message: "Demande introuvable." });
+        }
+        throw err;
+      }
     }),
 
   onboardClient: protectedProcedure
@@ -172,6 +194,131 @@ export const appRouter = {
     .handler(({ input }) => {
       return serviceArtisanController.removeService(input.id);
     }),
+
+  // ─── Avis (Reviews) ─────────────────────────────────────────────────────────
+
+  /**
+   * Protected: client submits a review for a completed demande.
+   * artisanId is resolved server-side from the demande — never from client input.
+   */
+  createAvis: protectedProcedure
+    .input(z.object({
+      demandeId: z.string(),
+      note: z.number().int().min(1).max(5),
+      commentaire: z.string().optional(),
+    }))
+    .handler(async ({ context, input }) => {
+      try {
+        return await avisController.create(context.session.user.id, input);
+      } catch (err: any) {
+        const msg: string = err?.message ?? "";
+        if (msg === "UN_AVIS_EXISTE_DEJA") {
+          throw new ORPCError("CONFLICT", { message: "Vous avez déjà laissé un avis pour cette demande." });
+        }
+        if (msg === "DEMANDE_NON_TERMINEE") {
+          throw new ORPCError("FORBIDDEN", { message: "Vous ne pouvez laisser un avis que sur une demande terminée." });
+        }
+        if (msg === "DEMANDE_INTROUVABLE" || msg === "ARTISAN_INTROUVABLE") {
+          throw new ORPCError("NOT_FOUND", { message: "Demande ou artisan introuvable." });
+        }
+        throw err;
+      }
+    }),
+
+  /**
+   * Public: fetch all avis received by an artisan, plus average + count.
+   * Used for public profile pages.
+   */
+  getArtisanAvis: publicProcedure
+    .input(z.object({ artisanId: z.string() }))
+    .handler(({ input }) => {
+      return avisController.getByArtisan(input.artisanId);
+    }),
+
+  /**
+   * Protected: check whether the current demande already has an avis.
+   * Returns the avis row or null.
+   */
+  getAvisForDemande: protectedProcedure
+    .input(z.object({ demandeId: z.string() }))
+    .handler(({ input }) => {
+      return avisController.getByDemande(input.demandeId);
+    }),
+
+  /**
+   * Protected: fetch all avis written by the current client.
+   */
+  getMyAvis: protectedProcedure.handler(({ context }) => {
+    return avisController.getByClient(context.session.user.id);
+  }),
+
+  // ─── Paiements ───────────────────────────────────────────────────────────────
+
+  /**
+   * Protected: client initiates a Stripe Checkout for a completed demande.
+   * montant is resolved 100% server-side from service_artisan.
+   * Returns { checkoutUrl } for immediate browser redirect.
+   */
+  createPaiement: protectedProcedure
+    .input(z.object({ demandeId: z.string() }))
+    .handler(async ({ context, input }) => {
+      try {
+        return await paiementController.createCheckoutSession(
+          input.demandeId,
+          context.session.user.id,
+        );
+      } catch (err: any) {
+        const msg: string = err?.message ?? "";
+        if (msg === "DEMANDE_INTROUVABLE") {
+          throw new ORPCError("NOT_FOUND", { message: "Demande introuvable." });
+        }
+        if (msg === "ACCES_INTERDIT") {
+          throw new ORPCError("FORBIDDEN", { message: "Accès refusé à cette demande." });
+        }
+        if (msg === "DEMANDE_NON_TERMINEE") {
+          throw new ORPCError("FORBIDDEN", { message: "Le paiement n'est disponible que pour les demandes terminées." });
+        }
+        if (msg === "ARTISAN_INTROUVABLE") {
+          throw new ORPCError("NOT_FOUND", { message: "Aucun artisan assigné à cette demande." });
+        }
+        if (msg === "MONTANT_INTROUVABLE") {
+          throw new ORPCError("UNPROCESSABLE_CONTENT", { message: "Impossible de déterminer le montant : l'artisan n'a pas de services enregistrés." });
+        }
+        if (msg === "DEJA_PAYE") {
+          throw new ORPCError("CONFLICT", { message: "Cette prestation a déjà été payée." });
+        }
+        throw err;
+      }
+    }),
+
+  /**
+   * Protected: fetch the paiement for a given demande (or null).
+   * Used by the client to check payment status on each demande card.
+   */
+  getPaiementForDemande: protectedProcedure
+    .input(z.object({ demandeId: z.string() }))
+    .handler(({ input }) => {
+      return paiementController.getByDemande(input.demandeId);
+    }),
+
+  /**
+   * Protected: return all paiements for the currently logged-in client.
+   */
+  getMyPaiements: protectedProcedure.handler(({ context }) => {
+    return paiementController.getByClient(context.session.user.id);
+  }),
+
+  /**
+   * Protected: return all paiements received for the artisan's demandes.
+   * artisanId resolved server-side from the session.
+   */
+  getArtisanPaiements: protectedProcedure.handler(async ({ context }) => {
+    const profile = await artisanService.getByUserId(context.session.user.id);
+    if (!profile) {
+      throw new ORPCError("NOT_FOUND", { message: "Profil artisan introuvable." });
+    }
+    return paiementController.getByArtisan(profile.id);
+  }),
 };
 
 export type AppRouter = typeof appRouter;
