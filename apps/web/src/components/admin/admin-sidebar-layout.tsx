@@ -105,7 +105,7 @@ export function AdminSidebarLayout({
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               title={collapsed ? item.label : undefined}
               className={`flex items-center relative ${
                 collapsed
@@ -153,7 +153,7 @@ export function AdminSidebarLayout({
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               title={collapsed ? item.label : undefined}
               className={`flex items-center gap-3 ${
                 collapsed

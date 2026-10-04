@@ -20,6 +20,7 @@ export function createAuth() {
       google: {
         clientId: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
+        prompt: "select_account",
       },
       facebook: {
         clientId: env.FACEBOOK_CLIENT_ID,
@@ -29,11 +30,21 @@ export function createAuth() {
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
     advanced: {
+      // ⚠️  Keep this block intact — removing or changing it causes
+      // `state_mismatch` OAuth errors in local development.
+      // sameSite:"lax" + secure:false is required for plain-HTTP localhost.
+      // In production (HTTPS), "none" + secure:true enables cross-site cookies
+      // needed for the Express auth server on a different subdomain.
       defaultCookieAttributes: {
         sameSite: env.NODE_ENV === "production" ? "none" : "lax",
         secure: env.NODE_ENV === "production",
         httpOnly: true,
       },
+      // Prevent cross-subdomain cookie leakage in production.
+      crossSubDomainCookies: {
+        enabled: false,
+      },
+      cookiePrefix: "better-auth",
     },
     user: {
       additionalFields: {

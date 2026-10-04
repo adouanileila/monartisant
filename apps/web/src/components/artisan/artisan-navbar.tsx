@@ -44,7 +44,7 @@ export function ArtisanNavbar() {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                 isActive
                   ? "bg-emerald-50 text-emerald-700"

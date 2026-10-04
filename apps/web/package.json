@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@monartisant/api": "workspace:*",
+    "@monartisant/auth": "workspace:*",
     "@monartisant/env": "workspace:*",
     "@monartisant/ui": "workspace:*",
     "@orpc/client": "catalog:",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { Menu, X } from "lucide-react";
 import SignupModal from "./signup-modal";
 import LoginModal from "./login-modal";
@@ -13,18 +13,18 @@ const NAV_LINKS = [
   { label: "Témoignages", href: "#testimonials" },
 ];
 
-export default function LandingNavbar() {
+function LandingNavbarContent() {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const searchParams = useSearchParams();
 
-useEffect(() => {
-  const auth = searchParams.get("auth");
-  if (auth === "signup") setSignupOpen(true);
-  if (auth === "login") setLoginOpen(true);
-}, [searchParams]);
+  useEffect(() => {
+    const auth = searchParams.get("auth");
+    if (auth === "signup") setSignupOpen(true);
+    if (auth === "login") setLoginOpen(true);
+  }, [searchParams]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -179,5 +179,13 @@ useEffect(() => {
         onSwitchToSignup={() => { setLoginOpen(false); setSignupOpen(true); }}
       />
     </>
+  );
+}
+
+export default function LandingNavbar() {
+  return (
+    <Suspense fallback={null}>
+      <LandingNavbarContent />
+    </Suspense>
   );
 }

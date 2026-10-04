@@ -27,15 +27,26 @@ export const userService = {
       ...(data.photoBase64 ? { image: data.photoBase64 } : {})
     }).where(eq(user.id, userId));
     
-    await db.insert(artisan).values({
-      id: randomUUID(),
-      userId,
-      description: data.description,
-      experience: data.experience,
-      adresse: data.adresse,
-      ville: data.ville,
-      estVerifie: false,
-    });
+    await db
+      .insert(artisan)
+      .values({
+        id: randomUUID(),
+        userId,
+        description: data.description,
+        experience: data.experience,
+        adresse: data.adresse,
+        ville: data.ville,
+        estVerifie: false,
+      })
+      .onConflictDoUpdate({
+        target: artisan.userId,
+        set: {
+          description: data.description,
+          experience: data.experience,
+          adresse: data.adresse,
+          ville: data.ville,
+        },
+      });
     
     return { success: true };
   }

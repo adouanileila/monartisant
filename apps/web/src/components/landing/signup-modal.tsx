@@ -53,7 +53,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
         onSuccess: () => {
           window.location.href = "/onboarding";
         },
-        onError: (ctx) => {
+        onError: (ctx: any) => {
           setError(ctx.error.message || "Une erreur est survenue.");
           setIsSubmitting(false);
         },

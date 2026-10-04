@@ -62,7 +62,7 @@ export function ClientSidebarLayout({ children }: { children: React.ReactNode })
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               title={collapsed ? item.label : undefined}
               className={`flex items-center relative ${collapsed ? 'justify-center px-0 py-3 rounded-xl border-l-0' : 'justify-between px-3 py-3 rounded-xl border-l-4'} transition-all duration-200 group ${
                 isActive
@@ -83,7 +83,7 @@ export function ClientSidebarLayout({ children }: { children: React.ReactNode })
         <div className={`my-6 border-t border-slate-100 ${collapsed ? 'mx-2' : 'mx-3'}`} />
 
         <Link
-          href="/dashboard/client/profil"
+          href={"/dashboard/client/profil" as any}
           title={collapsed ? "Mon profil" : undefined}
           className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0 py-3 rounded-xl border-l-0' : 'px-3 py-3 rounded-xl border-l-4'} transition-all duration-200 ${
             pathname?.startsWith("/dashboard/client/profil")

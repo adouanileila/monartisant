@@ -1,4 +1,5 @@
 import { demandeService } from "../services/demande.service";
+import { artisanService } from "../services/artisan.service";
 
 export const demandeController = {
   create: async (clientId: string, data: { description: string; adresse: string }) => {
@@ -7,7 +8,10 @@ export const demandeController = {
 
   getMyDemandes: async (userId: string, role: string) => {
     if (role === "artisan") {
-      return demandeService.getByArtisan(userId);
+      // demande.artisanId references artisan.id, NOT user.id — resolve first.
+      const profile = await artisanService.getByUserId(userId);
+      if (!profile) return []; // onboarding not yet complete
+      return demandeService.getAvailableForArtisan(profile.id);
     }
     return demandeService.getByClient(userId);
   },
@@ -19,4 +23,4 @@ export const demandeController = {
   accept: async (demandeId: string, artisanId: string) => {
     return demandeService.assignArtisan(demandeId, artisanId);
   },
-};
+};

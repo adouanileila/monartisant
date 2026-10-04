@@ -10,6 +10,7 @@
     }
   },
   "scripts": {
+    "db:seed": "node --import tsx/esm src/seed.ts",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
@@ -30,6 +31,7 @@
     "@monartisant/config": "workspace:*",
     "@types/pg": "^8.20.0",
     "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.0",
     "typescript": "catalog:"
   }
 }

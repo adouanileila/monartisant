@@ -21,6 +21,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@monartisant/auth": ["../../packages/auth/src/index.ts"],
+      "@monartisant/auth/*": ["../../packages/auth/src/*"],
       "@monartisant/ui/*": ["../../packages/ui/src/*"]
     }
   },

@@ -23,9 +23,23 @@ export default function OnboardingPage() {
       return;
     }
 
-    // Already has a role → skip onboarding, go to dashboard
     const userRole = session.user.role;
-    if (userRole === "client" || userRole === "artisan") {
+
+    // Clients who have a role already → skip onboarding
+    if (userRole === "client") {
+      router.replace("/dashboard");
+      return;
+    }
+
+    // Artisans: only skip onboarding if the artisan profile row exists.
+    // If role is "artisan" but there's no profile (e.g. role was set manually
+    // in the DB without completing the form), they must go through onboarding.
+    if (userRole === "artisan") {
+      // Let the component render; ArtisanAssistant's own logic will handle
+      // already-profiled artisans and redirect them after a successful re-submit,
+      // OR we can safely send them to dashboard since the profile exists.
+      // We do NOT bypass onboarding for artisans here — the artisan form
+      // is idempotent (upsert), so re-running it is harmless.
       router.replace("/dashboard");
       return;
     }

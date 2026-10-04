@@ -3,5 +3,7 @@ export * from "./artisan";
 export * from "./demande";
 export * from "./avis";
 export * from "./paiement";
-export *from "./categorie";
+export * from "./categorie";
 export * from "./message";
+export * from "./service";
+export * from "./service-artisan";

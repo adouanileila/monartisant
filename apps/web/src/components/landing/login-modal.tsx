@@ -52,7 +52,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignup }: LoginM
           // onboarding page guard will redirect to /dashboard if role already set
           window.location.href = "/onboarding";
         },
-        onError: (ctx) => {
+        onError: (ctx: any) => {
           setError(ctx.error.message || "Email ou mot de passe incorrect.");
           setIsSubmitting(false);
         },
